@@ -1,0 +1,17 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+        "browser": true
+    },
+    "plugins": [],
+    "extends": [
+        "eslint:recommended"
+    ],
+    "rules": {
+        // overrides
+    },
+    "env": {
+        "commonjs": true,
+        "browser": true
+    }
+}
