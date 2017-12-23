@@ -3,6 +3,7 @@
 const paper = require('paper');
 const _ = require('lodash');
 const gameInfo = require('./gameInfo');
+const NUMBER_FRAMES = 20;
 
 function Player(startCol, startRow, spaceInfo, toggleTurn, colorInfo, endRow, playerName) {
     const self = this;
@@ -34,13 +35,20 @@ Player.prototype.drawInitialCircle = function() {
 Player.prototype.drawPlayerCircle = function(row, col, color) {
     const self = this;
 
-    const x = (col * self.spaceInfo.xSpace) + (self.spaceInfo.xSpace / 2);
-    const y = (row * self.spaceInfo.ySpace) + (self.spaceInfo.ySpace / 2);
-    const centerPoint = new paper.Point(x, y);
+    const centerPoint = self.getPoint(row, col);
     const toAdd = new paper.Path.Circle(centerPoint, self.radius);
     toAdd.fillColor = color;
 
     return toAdd;
+};
+
+Player.prototype.getPoint = function(row, col) {
+    const self = this;
+
+    return new paper.Point(
+        (col * self.spaceInfo.xSpace) + (self.spaceInfo.xSpace / 2),
+        (row * self.spaceInfo.ySpace) + (self.spaceInfo.ySpace / 2)
+    );
 };
 
 Player.prototype.getPossibleMoves = function(state, gridSize, otherPlayerPosition) {
@@ -94,16 +102,37 @@ Player.prototype.drawPossibleMoves = function(state, gridSize, position) {
         return circle;
     }
 
+    function animateMove(entity, endPoint) {
+
+        const vector = endPoint.subtract(entity.position).divide(NUMBER_FRAMES);
+        let count = 0;
+
+        function animate() {
+            if (count === NUMBER_FRAMES) {
+                entity.off('frame', animate);
+                return;
+            }
+
+            entity.position = entity.position.add(vector);
+            count += 1;
+        }
+
+        entity.on('frame', animate);
+    }
+
     function setMoveEvent(circle, newRow, newCol) {
         circle.onClick = function() {
-            self.playerCircle.remove();
-            self.playerCircle = self.drawPlayerCircle(newRow, newCol, self.colorInfo.player);
+
+            const endPoint = self.getPoint(newRow, newCol);
+            animateMove(self.playerCircle, endPoint);
+
+            // self.playerCircle = self.drawPlayerCircle(newRow, newCol, self.colorInfo.player);
             self.position = {
                 row: newRow,
                 col: newCol
             };
 
-            if(newRow === self.endRow) {
+            if (newRow === self.endRow) {
                 self.removeMoves();
                 gameInfo.showWinner(self.playerName);
                 return;
