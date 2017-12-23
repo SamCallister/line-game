@@ -14,7 +14,7 @@ window.onload = function() {
         width: 800,
         height: 600
     };
-    const numberCols = 10;
+    const numberCols = 5;
 
     const game = new Game(dimensions, numberCols);
     game.start();

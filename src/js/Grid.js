@@ -13,11 +13,17 @@ function Grid(dimensions, spaceInfo, numberLines) {
     return self;
 }
 
-Grid.prototype.draw = function(state, toggleTurn) {
+Grid.prototype.draw = function(state, toggleTurn, canMakeWall) {
 
     function segEvent(entity, position, value) {
 
         function clickEvent() {
+
+            position.value = value;
+            if (!canMakeWall(position)) {
+                return;
+            }
+
             if (value === 'b') {
                 state[position.row][position.col].b = 1;
                 state[position.row + 1][position.col].t = 1;
@@ -101,6 +107,5 @@ Grid.prototype.draw = function(state, toggleTurn) {
     _.each(_.range(1, self.numberLines + 1), drawHorizontalLine);
     _.each(_.range(1, self.numberLines + 1), drawVerticalLine);
 }
-
 
 module.exports = Grid;
