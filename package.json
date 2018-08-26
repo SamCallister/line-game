@@ -11,7 +11,9 @@
     "eslint": "^4.13.1",
     "jshint-stylish": "latest",
     "style-loader": "^0.19.1",
-    "webpack": "^3.10.0"
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^3.1.1"
   },
   "dependencies": {
     "jquery": "^3.2.1",
@@ -19,7 +21,7 @@
     "paper": "^0.11.5"
   },
   "scripts": {
-    "dev": "webpack-dev-server --progress --colors",
+    "dev": "node_modules/.bin/webpack-dev-server --progress --colors",
     "lint": "node node_modules/eslint/bin/eslint.js --color 'src/**/*.js'"
   }
 }

@@ -51,7 +51,7 @@ Player.prototype.getPoint = function(row, col) {
     );
 };
 
-Player.prototype.getPossibleMoves = function(state, gridSize, otherPlayerPosition) {
+Player.prototype.getPossibleMoves = function(state, gridSize, otherPlayerPosition, canMakeMove) {
 
     function equalsOtherPlayerPos(row, col) {
         return row === otherPlayerPosition.row &&
@@ -62,21 +62,24 @@ Player.prototype.getPossibleMoves = function(state, gridSize, otherPlayerPositio
     const points = [];
     const currentState = state[self.position.row][self.position.col];
 
-    if (self.position.col + 1 <= gridSize && !currentState['r'] && !equalsOtherPlayerPos(self.position.row, self.position.col + 1)) {
+    if (self.position.col + 1 <= gridSize && !currentState['r'] && !equalsOtherPlayerPos(self.position.row, self.position.col + 1) &&
+        canMakeMove({ col: self.position.col + 1, row: self.position.row })) {
         points.push({
             point: new paper.Point(self.position.col + 1, self.position.row),
             col: self.position.col + 1,
             row: self.position.row
         });
     }
-    if (self.position.col - 1 >= 1 && !currentState['l'] && !equalsOtherPlayerPos(self.position.row, self.position.col - 1)) {
+    if (self.position.col - 1 >= 1 && !currentState['l'] && !equalsOtherPlayerPos(self.position.row, self.position.col - 1) &&
+        canMakeMove({ col: self.position.col - 1, row: self.position.row })) {
         points.push({
             point: new paper.Point(self.position.col - 1, self.position.row),
             col: self.position.col - 1,
             row: self.position.row
         });
     }
-    if (self.position.row + 1 <= gridSize && !currentState['b'] && !equalsOtherPlayerPos(self.position.row + 1, self.position.col)) {
+    if (self.position.row + 1 <= gridSize && !currentState['b'] && !equalsOtherPlayerPos(self.position.row + 1, self.position.col) &&
+        canMakeMove({ col: self.position.col, row: self.position.row + 1 })) {
         points.push({
             point: new paper.Point(self.position.col, self.position.row + 1),
             col: self.position.col,
@@ -84,7 +87,8 @@ Player.prototype.getPossibleMoves = function(state, gridSize, otherPlayerPositio
         });
     }
 
-    if (self.position.row - 1 >= 1 && !currentState['t'] && !equalsOtherPlayerPos(self.position.row - 1, self.position.col)) {
+    if (self.position.row - 1 >= 1 && !currentState['t'] && !equalsOtherPlayerPos(self.position.row - 1, self.position.col) &&
+        canMakeMove({ col: self.position.col, row: self.position.row - 1 })) {
         points.push({
             point: new paper.Point(self.position.col, self.position.row - 1),
             col: self.position.col,
@@ -94,7 +98,7 @@ Player.prototype.getPossibleMoves = function(state, gridSize, otherPlayerPositio
     return points;
 }
 
-Player.prototype.drawPossibleMoves = function(state, gridSize, position) {
+Player.prototype.drawPossibleMoves = function(state, gridSize, position, canMakeMove) {
 
     function callDrawPlayerAndSetEvent(position) {
         const circle = self.drawPlayerCircle(position.row, position.col, self.colorInfo.movement);
@@ -142,7 +146,7 @@ Player.prototype.drawPossibleMoves = function(state, gridSize, position) {
     }
 
     const self = this;
-    const moves = self.getPossibleMoves(state, gridSize, position);
+    const moves = self.getPossibleMoves(state, gridSize, position, canMakeMove);
 
     self.moveCircles = _.map(moves, callDrawPlayerAndSetEvent);
 };
